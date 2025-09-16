@@ -1,0 +1,1 @@
+web: gunicorn rail_ticket_system.wsgi --log-file -
