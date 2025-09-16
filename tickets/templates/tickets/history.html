@@ -1,0 +1,79 @@
+{% extends 'tickets/base.html' %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-history"></i> Booking History</h2>
+
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="passengername" class="form-control" 
+               placeholder="Filter by passenger name" 
+               value="{{ request.GET.passengername }}">
+        <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        <a href="{% url 'booking_history' %}" class="btn btn-secondary">Show All</a>
+    </div>
+</form>
+
+{% if history %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Train</th>
+                    <th>Route</th>
+                    <th>Passenger</th>
+                    <th>Category</th>
+                    <th>Requested</th>
+                    <th>Confirmed</th>
+                    <th>Waitlist</th>
+                    <th>Status</th>
+                    <th>Booked At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in history %}
+                <tr>
+                    <td>{{ ticket.train }}</td>
+                    <td>{{ ticket.route }}</td>
+                    <td>{{ ticket.passenger }}</td>
+                    <td>{{ ticket.category }}</td>
+                    <td>{{ ticket.requested }}</td>
+                    <td>
+                        {% if ticket.confirmed > 0 %}
+                            <span class="badge bg-success">{{ ticket.confirmed }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">0</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.waitlist > 0 %}
+                            <span class="badge bg-warning">{{ ticket.waitlist }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">0</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.status == 'CONFIRMED' %}
+                            <span class="badge bg-success">{{ ticket.status }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ ticket.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ ticket.bookedat|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> 
+        {% if request.GET.passengername %}
+            No bookings found for "{{ request.GET.passengername }}".
+        {% else %}
+            No bookings found. <a href="{% url 'search_trains' %}">Book your first ticket!</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

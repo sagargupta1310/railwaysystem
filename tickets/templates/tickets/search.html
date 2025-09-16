@@ -1,0 +1,63 @@
+{% extends 'tickets/base.html' %}
+
+{% block title %}Search Trains{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2><i class="fas fa-search"></i> Search Trains</h2>
+        <form method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="route" class="form-control" 
+                       placeholder="Enter city (e.g., Mumbai, Delhi)" 
+                       value="{{ request.GET.route }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+
+        {% if trains %}
+            <h4>Available Trains ({{ trains|length }} found)</h4>
+            <div class="row">
+                {% for train in trains %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ train.trainname }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-route"></i> {{ train.route }}<br>
+                                <i class="fas fa-chair"></i> Available Seats: 
+                                <span class="badge bg-success">{{ train.availableseats }}</span>
+                            </p>
+                            <a href="{% url 'book_ticket' train.id %}" class="btn btn-primary">
+                                <i class="fas fa-ticket-alt"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% elif request.GET.route %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> 
+                No trains found for "{{ request.GET.route }}". Try searching for Mumbai, Delhi, etc.
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Search Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Enter start or destination city</li>
+                    <li>Search is case-insensitive</li>
+                    <li>Partial matches work (e.g., "Mum" finds Mumbai)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
