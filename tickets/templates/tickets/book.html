@@ -17,6 +17,17 @@
                 <p><i class="fas fa-route"></i> <strong>Route:</strong> {{ train.route }}</p>
                 <p><i class="fas fa-chair"></i> <strong>Available Seats:</strong> 
                    <span class="badge bg-success">{{ train.availableseats }}</span></p>
+                
+                {# Show current waiting list count if available seats are zero #}
+                {% if train.availableseats == 0 %}
+                    <p><i class="fas fa-list-ol"></i> <strong>Current Waiting List:</strong>
+                        {% if waiting_list_count is not none %}
+                            <span class="badge bg-warning">{{ waiting_list_count }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">0</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
             </div>
         </div>
 
@@ -30,6 +41,9 @@
                 <a href="{% url 'booking_history' %}" class="btn btn-primary">View All Bookings</a>
             </div>
         {% else %}
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
             <form method="post">
                 {% csrf_token %}
                 <div class="row">

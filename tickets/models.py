@@ -11,6 +11,8 @@ class Train(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     totalseats = models.IntegerField()
     availableseats = models.IntegerField()
+    waiting_list_capacity = models.IntegerField(default=10)  # Added field for WL capacity
+
     def __str__(self):
         return f"{self.trainname} {self.route}"
 
@@ -32,5 +34,6 @@ class Ticket(models.Model):
     waitlistseats = models.IntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="CONFIRMED")
     bookedat = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"{self.passengername} - {self.train.trainname} - {self.status}"
