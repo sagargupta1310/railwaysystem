@@ -28,7 +28,9 @@
                             <p class="card-text">
                                 <i class="fas fa-route"></i> {{ train.route }}<br>
                                 <i class="fas fa-chair"></i> Available Seats: 
-                                <span class="badge bg-success">{{ train.availableseats }}</span>
+                                <span class="badge bg-success">{{ train.availableseats }}</span><br>
+                                <i class="fas fa-list-ol"></i> Current Waiting List:
+                                <span class="badge bg-warning">{{ train.waiting_list_count }}</span>
                             </p>
                             <a href="{% url 'book_ticket' train.id %}" class="btn btn-primary">
                                 <i class="fas fa-ticket-alt"></i> Book Now

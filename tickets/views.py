@@ -7,23 +7,30 @@ from django.db.models import Sum
 def home(request):
     return render(request, 'tickets/home.html')
 
+from django.db.models import Sum
+
 def search_trains(request):
     route = request.GET.get("route", "")
     trains = []
+    trains_data = []
     if route:
         trains = Train.objects.filter(route__startcity__icontains=route) | Train.objects.filter(route__endcity__icontains=route)
+    for t in trains:
+        waiting_list_count = Ticket.objects.filter(train=t).aggregate(
+            total_waitlist=Sum('waitlistseats')
+        )['total_waitlist'] or 0
+        trains_data.append({
+            "id": t.id,
+            "trainname": t.trainname,
+            "route": str(t.route),
+            "availableseats": t.availableseats,
+            "waiting_list_count": waiting_list_count,
+        })
     # For API requests
     if request.headers.get('Accept') == 'application/json':
-        out = []
-        for t in trains:
-            out.append({
-                "id": t.id,
-                "trainname": t.trainname,
-                "route": str(t.route),
-                "availableseats": t.availableseats,
-            })
-        return JsonResponse({"trains": out})
-    return render(request, 'tickets/search.html', {'trains': trains})
+        return JsonResponse({"trains": trains_data})
+    return render(request, 'tickets/search.html', {'trains': trains_data})
+
 
 def book_ticket(request, trainid):
     try:
